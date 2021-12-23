@@ -10,21 +10,6 @@ let db = new sqlite3.Database(DBSOURCE, err => {
         throw err;
     } else {
         console.log('Connected to the SQLite database.');
-        db.run(`CREATE TABLE ${BLOG} (
-            id INTEGER PRIMARY KEY AUTOINCREMENT, 
-            title TEXT,
-            content TEXT,
-            created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-            updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-            user_id INTEGER,
-            FOREIGN KEY(user_id) REFERENCES account(acc_id) ON UPDATE CASCADE
-        )`,
-            err => {
-                if (err) {
-                    console.error(`Table \'${BLOG}\' already created`);
-                }
-            });
-
         db.run(`CREATE TABLE ${ACCOUNT} (
             acc_id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NUT NULL,
@@ -55,6 +40,20 @@ let db = new sqlite3.Database(DBSOURCE, err => {
                         });
                 }
             })
+        });
+
+        db.run(`CREATE TABLE ${BLOG} (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            title TEXT,
+            content TEXT,
+            created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            user_id INTEGER NOT NULL,
+            FOREIGN KEY(user_id) REFERENCES account(acc_id) ON UPDATE CASCADE
+        )`, err => {
+            if (err) {
+                console.error(`Table \'${BLOG}\' already created`);
+            }
         });
     }
 });
