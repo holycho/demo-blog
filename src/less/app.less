@@ -1,0 +1,57 @@
+// 配色組合: #1B8EF2, #1BA0F2, #38BDF2, #38D0F2, #F2A516
+@color-primary: #1BA0F2;
+
+.app-bar {
+    position        : absolute;
+    top             : 0px;
+    left            : 0px;
+    width           : 100vw;
+    height          : 45px;
+    background-color: @color-primary;
+    display         : flex;
+    align-items     : center;
+    justify-content : flex-end;
+    opacity         : .8;
+}
+
+.app-icon {
+    margin: 0px 6px;
+}
+
+.app-title {
+    display    : flex;
+    // width  : calc(100vw - 160px);
+    flex-grow  : 1;
+    font-size  : 20px;
+    color      : white;
+    margin     : 0px 5px;
+    text-shadow: rgba(0, 0, 0, 0.3) 0.1em 0.1em 0.2em;
+}
+
+.app-account {
+    display          : flex;
+    // width      : 80px;
+    color            : white;
+    font-size        : 16px;
+    // line-height   : 45px;
+    font-weight      : 600;
+    margin           : 0px 5px;
+    align-items      : center;
+}
+
+.app-logout {
+    display        : flex;
+    justify-content: center;
+    align-items    : center;
+    width          : 50px;
+    height         : 35px;
+    color          : white;
+    border         : 1px solid white;
+    border-radius  : 5px;
+    margin         : 0px 5px;
+    cursor         : pointer;
+
+    &:hover {
+        opacity: .8;
+    }
+}
