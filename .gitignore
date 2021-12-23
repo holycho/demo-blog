@@ -4,5 +4,6 @@ public/images/
 public/javascripts/
 *.log
 *.db
+*.sqlite
 .svn
 .vscode/
