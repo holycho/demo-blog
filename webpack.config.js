@@ -10,7 +10,8 @@ module.exports = {
         'react-redux',
         'react-router',
         'redux',
-        'redux-thunk'
+        'redux-thunk',
+        'axios'
     ]
   },
   // target: 'node', // 加了之後 瀏覽器會報錯: Uncaught ReferenceError: require is not defined

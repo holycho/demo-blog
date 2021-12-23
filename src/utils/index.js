@@ -1,3 +1,5 @@
+import axios from "axios";
+
 if (typeof window === 'undefined') {
     throw new Error('invalid environment');
 }
@@ -35,6 +37,21 @@ async function login(account, password) {
     }
 }
 
+async function loginByAxios(account, password) {
+    try {
+        let result = await axios.post('api/login', {
+            account,
+            password
+        });
+        console.log('login: ', result);
+        if (result) {
+            return JSON.parse(JSON.stringify(result.data));
+        }
+    } catch (err) {
+        console.error("Login failed", err);
+    }
+}
+
 async function checkToken(token) {
     const options = {
         method: "GET",
@@ -54,11 +71,29 @@ async function checkToken(token) {
     }
 }
 
+async function checkTokenByAxios(token) {
+    try {
+        let result = await axios.get('api/session', {
+            headers: {
+                'x-access-token': token
+            }
+        });
+        console.log('session: ', result);
+        if (result) {
+            return JSON.parse(JSON.stringify(result.data));
+        }
+    } catch (err) {
+        console.error("Getting the token failed", err);
+    }
+}
+
 export {
     host,
     hostname,
     port,
     protocol,
     login,
-    checkToken
+    loginByAxios,
+    checkToken,
+    checkTokenByAxios
 }

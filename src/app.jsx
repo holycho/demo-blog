@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import { BrowserRouter, Route, Link, Switch } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
-import { checkToken } from "Source/utils";
+import { checkTokenByAxios } from "Source/utils";
 
 import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
@@ -37,7 +37,7 @@ const App = props => {
             // check the token in frond end and then logout if this token is expired
             let obj = JSON.parse(window.localStorage.getItem('demo-blog'));
             if (obj) {
-                let res = await checkToken(obj.token);
+                let res = await checkTokenByAxios(obj.token);
                 if (res && res.errcode === 'AUTH_TOKEN_FAIL') {
                     handleLogout();
                 }
@@ -49,7 +49,7 @@ const App = props => {
     useEffect(async () => {
         let obj = JSON.parse(window.localStorage.getItem('demo-blog'));
         if (obj) {
-            let res = await checkToken(obj.token);
+            let res = await checkTokenByAxios(obj.token);
             if (res && res.success) {
                 setAccount(obj.account);
                 setUserId(obj.userId);
