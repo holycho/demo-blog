@@ -1,13 +1,13 @@
 
 var express = require('express');
 var router = express.Router();
-var db = require("../database.js");
+var db = require("./db");
 
-router.get('/', function (req, res, next) {
+function renderApp (req, res, next) {
     res.render('index', { title: `My Blog` });
-});
+};
 
-router.get('/api/blogs/:user_id', function (req, res, next) {
+function getBlogsByUserId (req, res, next) {
     var sql = "SELECT * FROM blog WHERE user_id = ?"
     var params = [req.params.user_id]
     db.all(sql, params, (err, rows) => {
@@ -22,9 +22,9 @@ router.get('/api/blogs/:user_id', function (req, res, next) {
             "data": rows
         });
     });
-});
+};
 
-router.get('/api/blog/:id', function (req, res, next) {
+function getBlogByBlogId (req, res, next) {
     var sql = "SELECT * FROM blog WHERE id = ?"
     var params = [req.params.id]
     db.get(sql, params, (err, row) => {
@@ -46,19 +46,19 @@ router.get('/api/blog/:id', function (req, res, next) {
             "data": row
         });
     });
-});
+};
 
-router.post('/api/blog', function (req, res, next) {
+function postBlogContent (req, res, next) {
     let errors = [];
-    // get fields from body
+    // 說明: 驗證 body 內欄位 title, content, user_id
     if (!req.body.title) {
-        errors.push('No title specified');
+        errors.push('No \'title\' specified');
     }
     if (!req.body.content) {
-        errors.push('No content specified');
+        errors.push('No \'content\' specified');
     }
     if (!req.body.user_id) {
-        errors.push('No user specified');
+        errors.push('No \'user\' specified');
     }
     if (errors.length > 0) {
         res.status(400).json({
@@ -96,11 +96,19 @@ router.post('/api/blog', function (req, res, next) {
                 },
                 "id": this.lastID
             });
-        })
-    })
-});
+        });
+    });
+};
 
-router.patch('/api/blog/:id', function (req, res, next) {
+function updateBlogContent (req, res, next) {
+    const errors = [];
+    if (!req.body.id) {
+        errors.push('No \'id\' specified');
+    }
+    if (errors.length > 0) {
+        res.status(400).json({ error: errors.join(',') });
+        return;
+    }
     var sql = `UPDATE blog SET title=COALESCE(?,title),content=COALESCE(?,content),updated=datetime('now','localtime') WHERE id=?`;
     var params = [req.body.title, req.body.content, req.params.id];
     db.run(sql, params, function (err, result) {
@@ -130,11 +138,11 @@ router.patch('/api/blog/:id', function (req, res, next) {
                 },
                 "id": data.id
             });
-        })
-    })
-});
+        });
+    });
+};
 
-router.delete('/api/blog/:id', function (req, res, next) {
+function deleteBlogByBlogId (req, res, next) {
     var countSql = `SELECT COUNT(*) as total FROM blog WHERE id=?`;
     // get(): 取得執行結果
     db.get(countSql, req.params.id, function (err, result) {
@@ -166,11 +174,11 @@ router.delete('/api/blog/:id', function (req, res, next) {
                 "changes": `blog id: ${req.params.id} is deleted`,
                 "id": req.params.id
             });
-        })
-    })
-});
+        });
+    });
+};
 
-router.get('/api/account', function (req, res, next) {
+function getAllAccounts (req, res, next) {
     var sql = `SELECT * FROM account`;
     var params = [];
     db.all(sql, params, (error, rows) => {
@@ -185,16 +193,16 @@ router.get('/api/account', function (req, res, next) {
             "data": rows
         });
     });
-})
+};
 
-router.post('/api/account', function (req, res, next) {
+function postAccountContent (req, res, next) {
     let errors = [];
-    // get fields from body
+    // 說明: 驗證 body 內欄位 username, password
     if (!req.body.username) {
-        errors.push('No username specified');
+        errors.push('No \'username\' specified');
     }
     if (!req.body.password) {
-        errors.push('No password specified');
+        errors.push('No \'password\' specified');
     }
     if (errors.length > 0) {
         res.status(400).json({
@@ -260,9 +268,18 @@ router.post('/api/account', function (req, res, next) {
                     },
                     "acc_id": this.lastID
                 });
-            })
-        })
+            });
+        });
     });
-});
+};
+
+router.get('/', renderApp)
+      .get('/api/blogs/:user_id', getBlogsByUserId)
+      .get('/api/blog/:id', getBlogByBlogId)
+      .post('/api/blog', postBlogContent)
+      .patch('/api/blog/:id', updateBlogContent)
+      .delete('/api/blog/:id', deleteBlogByBlogId)
+      .get('/api/account', getAllAccounts)
+      .post('/api/account', postAccountContent);
 
 module.exports = router;

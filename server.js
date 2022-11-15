@@ -1,11 +1,11 @@
-var main = require('./main');
+var app = require('./server/app');
 var debug = require('debug')('demo-resume:server');
 var http = require('http');
 
 var port = normalizePort(process.env.PORT || '3000');
-main.set('port', port);
+app.set('port', port);
 
-const server = http.createServer(main);
+const server = http.createServer(app);
 
 server.listen(port, function(){
     console.log('Express server listening on port ' + port);
